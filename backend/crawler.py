@@ -226,7 +226,7 @@ class crawler(object):
     def _visit_title(self, elem):
         """Called when visiting the <title> tag."""
         title_text = self._text_of(elem).strip()
-        print "document title="+ repr(title_text)
+        #print "document title="+ repr(title_text)
 
         # TODO update document title for document id self._curr_doc_id
         self._curr_title = title_text
@@ -254,7 +254,8 @@ class crawler(object):
         # TODO: knowing self._curr_doc_id and the list of all words and their
         #       font sizes (in self._curr_words), add all the words into the
         #       database for this document
-        print "    num words="+ str(len(self._curr_words))
+        #print "    num words="+ str(len(self._curr_words))
+        return
 
     def _increase_font_factor(self, factor):
         """Increade/decrease the current font size."""
@@ -342,7 +343,7 @@ class crawler(object):
             else:
                 self._add_text(tag, line)
 
-        print self._doc_index [self._curr_doc_id-1].getDescription().decode('unicode-escape')
+        #print self._doc_index [self._curr_doc_id-1].getDescription().decode('unicode-escape')
 
     def get_inverted_index(self):
         return self._inverted_index
@@ -394,10 +395,10 @@ class crawler(object):
                 self._curr_words = [ ]
                 self._index_document(soup)
                 self._add_words_to_document()
-                print "    url="+repr(self._curr_url)
+                #print "    url="+repr(self._curr_url)
 
             except Exception as e:
-                print e
+                #print e
                 pass
             finally:
                 if socket:
@@ -406,8 +407,10 @@ class crawler(object):
 if __name__ == "__main__":
     bot = crawler(None, "urls.txt")
     bot.crawl(depth=1)
-    print bot.get_resolved_inverted_index()
-    #print len(bot._lexicon)
-    #print len(bot._inverted_index)
-    #for i in bot._lexicon:
-    #    print bot._lexicon.index(i)
+
+    inverted_index = bot.get_inverted_index()
+    resolved_inverted_index = bot.get_resolved_inverted_index()
+
+    for index in resolved_inverted_index:
+        print index, ": ", resolved_inverted_index[index]
+
