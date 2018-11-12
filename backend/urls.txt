@@ -1,0 +1,3 @@
+http://amazon.ca
+http://google.ca
+http://bing.com
