@@ -16,31 +16,27 @@ sorted_rank     = sorted(rank.items(), key=lambda(k,v): v, reverse=True)
 # pretty prints the PageRank scores   
 pprint.pprint (sorted_rank)
 
-#for k, v in sorted(page_rank.iteritems()):
-    #print k, v
-
-
 # store into db
-con = lite.connect("backend.db")
+con = lite.connect("table.db")
 cur = con.cursor()
-cur.execute("CREATE TABLE lexicon (word_id integer, word text)")
-cur.execute("CREATE TABLE document_index (doc_id integer, url text)")
-cur.execute("CREATE TABLE inverted_index (word_id integer, doc_id integer)")
-cur.execute("CREATE TABLE page_rank (doc_id integer, score double)")
+cur.execute("CREATE TABLE Lexicon (word_id integer, word text)")
+cur.execute("CREATE TABLE DocIndex (doc_id integer, url text)")
+cur.execute("CREATE TABLE InvertedIndex (word_id integer, doc_id integer)")
+cur.execute("CREATE TABLE PageRank (doc_id integer, rank double)")
 
 for word_id in range(len(lexicon)):
-    cur.execute("INSERT INTO lexicon VALUES('{}', '{}')".format(word_id, lexicon[word_id]))
+    cur.execute("INSERT INTO Lexicon VALUES('{}', '{}')".format(word_id, lexicon[word_id]))
 
 for doc_id in range(len(document_index)):
     doc = document_index[doc_id]
-    cur.execute("INSERT INTO document_index VALUES('{}','{}')".format(doc_id, doc._url))
+    cur.execute("""INSERT INTO DocIndex VALUES("{0}","{1}")""".format(doc_id, doc._url.replace('"', '').replace("'", '')))
 
 for word_id, doc_id_set in inverted_index.iteritems():
     for doc_id in doc_id_set:
-        cur.execute("INSERT INTO inverted_index VALUES('{}','{}')".format(word_id, doc_id))
+        cur.execute("INSERT INTO InvertedIndex VALUES('{}','{}')".format(word_id, doc_id))
 
-for doc_id, score in sorted_rank:
-    cur.execute("INSERT INTO page_rank VALUES('{}','{}')".format(doc_id, score))
+for doc_id, rank in sorted_rank:
+    cur.execute("INSERT INTO PageRank VALUES('{}','{}')".format(doc_id, rank))
 
 con.commit()
 con.close()
